@@ -260,10 +260,16 @@ class Dashboard extends Component {
     return (
       <SafeAreaView style={styles.overview}>
         <ScrollView contentContainerStyle={{ paddingVertical: 25 }}>
-        <View style = {styles.secontainer}>        
-              <Button onPress={this.updateRouter1} title="Modem 1" color="#841584" />
-              <Button onPress={this.updateRouter2} title="Modem 2" color="#841584" />
-              <Button onPress={this.updateRouter3} title="Modem 3" color="#841584" />
+        <View style = {styles.secontainer}>
+              <TouchableOpacity onPress={this.updateRouter1} style={{backgroundColor: "#841584"}}>
+                <Text color="white" style={{paddingHorizontal: 6, paddingVertical: 9}}>Modem 1</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.updateRouter2} style={{backgroundColor: "#841584"}}>
+                <Text color="white" style={{paddingHorizontal: 6, paddingVertical: 9}}>Modem 2</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.updateRouter3} style={{backgroundColor: "#841584"}}>
+                <Text color="white" style={{paddingHorizontal: 6, paddingVertical: 9}}>Modem 3</Text>
+              </TouchableOpacity>
               </View>
 
           <Block row style={[styles.margin, { marginTop: 18 }]}>
