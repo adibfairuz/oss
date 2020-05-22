@@ -96,8 +96,8 @@ class ConfigurationForm extends React.Component {
                     <View style={styles.container}>
 
                         <View style={styles.form}>
-                        <Text style={styles.rowHeaderTitle}>
-                            Nama Pelanggan
+                            <Text style={styles.rowHeaderTitle}>
+                                Nama Pelanggan
                             </Text>
                             <View style={styles.inputBox}>
                                 <TextInput

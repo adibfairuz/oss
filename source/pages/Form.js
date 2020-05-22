@@ -81,7 +81,6 @@ class ConfigurationForm extends React.Component {
     }
     getConfigForm = () => {
         let data = {
-          user_id: this.props.user.id,
           token: API_config.token
         }
         this.props.getConfigForm(data)
@@ -113,7 +112,6 @@ class ConfigurationForm extends React.Component {
         this.props.deleteConfigForm(data);
     }
     render() {
-        console.log('ini configggggggggg', this.props.configForm)
         //const {navigate} = this.props.navigation;
         return (
             <View style={{flex: 1}}>
@@ -158,7 +156,7 @@ class ConfigurationForm extends React.Component {
                                 this.state.configForm.length
                                 ?
                                 this.state.configForm.map(data => {
-                                    return <Card modal={this.handleModal} data={data} {...this.props}/>
+                                    return <Card key={data.id} modal={this.handleModal} data={data} {...this.props}/>
                                 })
                                 :
                                 <ActivityIndicator style={styles.centeredView} size="large" color="#ffff" />

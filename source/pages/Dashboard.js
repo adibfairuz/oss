@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Image, SafeAreaView, ScrollView, StyleSheet, Dimensions, View, Button} from 'react-native';
+import { TouchableOpacity, Image, SafeAreaView, ScrollView, StyleSheet, Dimensions, View, Button, Picker} from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import { VictoryArea, VictoryBar, VictoryChart, VictoryTheme,VictoryLine } from "victory-native";
 
@@ -36,11 +36,22 @@ return time;
 }
 
 const styles = StyleSheet.create({
-    secontainer: {
-      marginTop: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-      },
+  secontainer: {
+    marginTop: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    },
+    inputBox: {
+      opacity: 0.8,
+      borderRadius: 5,
+      justifyContent: 'center',
+      marginHorizontal: 20,
+      marginBottom: 10,
+      backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+  picker: {
+    flex: 1
+  },
   overview: {
     flex: 1,
     flexDirection: 'column',
@@ -130,20 +141,21 @@ class Dashboard extends Component {
     super(props);
     this.state = {
       a : 14,
-    b : 13,
-    c : 12,
-    d : 11,
-    e : 10,
-    modemnow : "Modem 1",
-    data: [],
-    isLoading1: true,
-    isLoading2: true,
-    isLoading3: true,
-    
-    downlink: [],
-    uplink: [],
-    modem: [],
-    headline: [],
+      b : 13,
+      c : 12,
+      d : 11,
+      e : 10,
+      modemnow : "Modem 1",
+      data: [],
+      isLoading1: true,
+      isLoading2: true,
+      isLoading3: true,
+      
+      downlink: [],
+      uplink: [],
+      modem: [],
+      headline: [],
+      router: ''
     }
   } 
 
@@ -250,6 +262,23 @@ class Dashboard extends Component {
       token: API_config.token
     }
     this.props.getHeadline(data);
+  }
+  updateRouter = (e) => {
+    this.setState({router: e})
+    switch (e) {
+      case 'm1':
+        this.updateRouter1();
+        break;
+      case 'm2':
+        this.updateRouter2();
+        break;
+      case 'm3':
+        this.updateRouter3();
+        break;
+    
+      default:
+        break;
+    }
   }     
 
   render() {
@@ -260,17 +289,18 @@ class Dashboard extends Component {
     return (
       <SafeAreaView style={styles.overview}>
         <ScrollView contentContainerStyle={{ paddingVertical: 25 }}>
-        <View style = {styles.secontainer}>
-              <TouchableOpacity onPress={this.updateRouter1} style={{backgroundColor: "#841584"}}>
-                <Text color="white" style={{paddingHorizontal: 6, paddingVertical: 9}}>Modem 1</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.updateRouter2} style={{backgroundColor: "#841584"}}>
-                <Text color="white" style={{paddingHorizontal: 6, paddingVertical: 9}}>Modem 2</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.updateRouter3} style={{backgroundColor: "#841584"}}>
-                <Text color="white" style={{paddingHorizontal: 6, paddingVertical: 9}}>Modem 3</Text>
-              </TouchableOpacity>
-              </View>
+          <View style = {styles.inputBox}>
+                <Picker
+                    selectedValue={this.state.router}
+                    style={styles.picker}
+                    mode='dropdown'
+                    onValueChange={this.updateRouter}
+                >
+                    <Picker.Item label="Modem 1" value="m1" />
+                    <Picker.Item label="Modem 2" value="m2" />
+                    <Picker.Item label="Modem 3" value="m3" />
+                </Picker>
+          </View>
 
           <Block row style={[styles.margin, { marginTop: 18 }]}>
             <Card middle style={{ marginRight: 7 }}>

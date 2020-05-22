@@ -3,7 +3,7 @@ import { Platform, Dimensions, Text } from 'react-native';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator, HeaderBackButton } from "react-navigation-stack";
-import { Feather, AntDesign } from '@expo/vector-icons';
+import { Feather, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import Header from '../pages/shared/HeaderDashboard';
 import HeaderPage from '../pages/shared/HeaderPage';
 
@@ -190,7 +190,7 @@ const DrawerNavigator = createDrawerNavigator(
             screen: MaintenanceFormNavigator,
             navigationOptions: {
                 title: "Maintenance Form",
-                drawerIcon: ({tintColor}) => <Feather name="edit" size={16} color={tintColor} />
+                drawerIcon: ({tintColor}) => <MaterialIcons name="report-problem" size={16} color={tintColor} />
             }
         },
         Logout: {
