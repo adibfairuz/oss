@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, Text, KeyboardAvoidingView, Picker, ScrollView, Alert, TouchableOpacity, BackHandler } from 'react-native';
+import { View, StyleSheet, TextInput, Text, KeyboardAvoidingView, Picker, ScrollView, Alert, TouchableOpacity, BackHandler, Dimensions } from 'react-native';
 import { Button } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import { DocumentPicker } from 'expo';
@@ -11,7 +11,7 @@ import { getAsyncStorage } from '../../../action/asyncStorage';
 import { connect } from 'react-redux';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getProfile } from '../../../action/profile';
-import HeaderSubPage from '../../shared/HeaderSubPage'
+import moment from 'moment'
 
 class EditConfigurationForm extends React.Component {
     constructor(props){
@@ -20,26 +20,13 @@ class EditConfigurationForm extends React.Component {
         this.state = {
             id: data.id,
             tanggal_mulai:new Date(),
-            checkbox1: data.beam9 === "1" ? true : false,
-            checkbox2: data.beam10 === "1" ? true : false,
-            checkbox3: data.beam12 === "1" ? true : false,
-            checkbox4: data.beam13 === "1" ? true : false,
-            checkbox5: data.beam15 === "1" ? true : false,
-            checkbox6: data.beam16 === "1" ? true : false,
-            checkbox7: data.beam18 === "1" ? true : false,
             namapelanggan: data.namapelanggan,
             lokasi: data.lokasi,
             tanggalpemasangan: data.tanggalpemasangan,
             konfigurasi:"",
             date_created:"",
             edited_at:"",
-            beam9:"",
-            beam10:"",
-            beam12:"",
-            beam13:"",
-            beam15:"",
-            beam16:"",
-            beam18:"",
+            beam: data.beam,
             modem: data.modemid
         }
         this.initialState = this.state
@@ -107,16 +94,10 @@ class EditConfigurationForm extends React.Component {
         const data = {
             id: this.state.id,
             lokasi: this.state.lokasi,
-            tanggalpemasangan: this.state.tanggalpemasangan,
+            tanggalpemasangan: this.state.tanggalpemasangan.includes('-') ? new Date(this.state.tanggalpemasangan).getTime() : this.state.tanggalpemasangan,
             namapelanggan: this.state.namapelanggan,
             modemid: this.state.modem,
-            beam9: this.state.checkbox1, 
-            beam10: this.state.checkbox2, 
-            beam12: this.state.checkbox3, 
-            beam13: this.state.checkbox4, 
-            beam15: this.state.checkbox5, 
-            beam16: this.state.checkbox6, 
-            beam18: this.state.checkbox7, 
+            beam: this.state.beam,
             token: API_config.token
         }
         this.props.editConfigForm(data);
@@ -131,8 +112,8 @@ class EditConfigurationForm extends React.Component {
                     <View style={styles.container}>
 
                         <View style={styles.form}>
-                        <Text style={styles.rowHeaderTitle}>
-                            Nama Pelanggan
+                            <Text style={styles.rowHeaderTitle}>
+                                Nama Pelanggan
                             </Text>
                             <View style={styles.inputBox}>
                                 <TextInput
@@ -161,7 +142,7 @@ class EditConfigurationForm extends React.Component {
                             <View>
                                 <DatePicker
                                     style={{width: 295}}
-                                    date={this.state.tanggalpemasangan}
+                                    date={moment(this.state.tanggalpemasangan, 'x').format("DD-MM-YYYY")}
                                     mode="date"
                                     placeholder="select date"
                                     format="YYYY-MM-DD"
@@ -181,7 +162,7 @@ class EditConfigurationForm extends React.Component {
                                         marginLeft: 36
                                     }
                                     }}
-                                    onDateChange={(tanggalpemasangan) => {this.setState({tanggalpemasangan})}}
+                                    onDateChange={(tanggalpemasangan) => {this.setState({tanggalpemasangan: new Date(tanggalpemasangan).getTime()})}}
                                 />
                             </View>
                             
@@ -189,54 +170,21 @@ class EditConfigurationForm extends React.Component {
                             <Text style={styles.rowHeaderTitle}>
                             Konfigurasi 
                             </Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                <CheckBox
-                                value={this.state.checkbox1}
-                                onValueChange={() => this.setState({ checkbox1: !this.state.checkbox1 })}
-                                />
-                                <Text style={{marginTop: 5}}> Beam9 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <CheckBox
-                                value={this.state.checkbox2}
-                                onValueChange={() => this.setState({ checkbox2: !this.state.checkbox2 })}
-                                />                         
-                                <Text style={{marginTop: 5}}> Beam10 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>  
-                                <CheckBox
-                                value={this.state.checkbox3}
-                                onValueChange={() => this.setState({ checkbox3: !this.state.checkbox3 })}
-                                />                         
-                                <Text style={{marginTop: 5}}> Beam12 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>   
-                                <CheckBox
-                                value={this.state.checkbox4}
-                                onValueChange={() => this.setState({ checkbox4: !this.state.checkbox4 })}
-                                />
-                                <Text style={{marginTop: 5}}> Beam13 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>  
-                                <CheckBox
-                                value={this.state.checkbox5}
-                                onValueChange={() => this.setState({ checkbox5: !this.state.checkbox5 })}
-                                />
-                                <Text style={{marginTop: 5}}> Beam15 </Text>
-                            </View>    
-                            <View style={{ flexDirection: 'row' }}>  
-                                <CheckBox
-                                value={this.state.checkbox6}
-                                onValueChange={() => this.setState({ checkbox6: !this.state.checkbox6 })}
-                                />
-                                <Text style={{marginTop: 5}}> Beam16 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>  
-                                <CheckBox
-                                value={this.state.checkbox7}
-                                onValueChange={() => this.setState({ checkbox7: !this.state.checkbox7})}
-                                />
-                                <Text style={{marginTop: 5}}> Beam18 </Text>
+                            <View style={styles.inputBox}>
+                                <Picker
+                                    selectedValue={this.state.beam}
+                                    style={{flex: 1, height: 34}}
+                                    onValueChange={(itemValue, itemIndex) => this.setState({beam: itemValue})}
+                                >
+                                    <Picker.Item label="-" value="" />
+                                    <Picker.Item label="beam9" value="beam9" />
+                                    <Picker.Item label="beam10" value="beam10" />
+                                    <Picker.Item label="beam12" value="beam12" />
+                                    <Picker.Item label="beam13" value="beam13" />
+                                    <Picker.Item label="beam15" value="beam15" />
+                                    <Picker.Item label="beam16" value="beam16" />
+                                    <Picker.Item label="beam18" value="beam18" />
+                                </Picker>
                             </View>
                             <Text style={styles.rowHeaderTitle}>
                                 Modem id
@@ -271,6 +219,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#4e73df',
         alignItems: 'center',
         justifyContent: 'center',
+        minHeight: Dimensions.get("window").height,
     },
     contentContainer: {
         paddingTop: 30,

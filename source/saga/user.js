@@ -5,16 +5,16 @@ import {
 } from '../action/user';
 import {filteredFetch} from '../utils/apiUtils';
 import API_config from '../config/API_config';
+import convertJSONToForm from '../utils/convertJSONToForm';
 
 
 export function* getUser(action) {
-    console.log('saga', action)
     try {
         let data = yield filteredFetch({
             method: 'post',
             headers: { 'Content-Type': 'application/json'},
             url: `${API_config.url}/api/auth/login`,
-            data: JSON.stringify(action.data)
+            data: convertJSONToForm(action.data)
         }
         );
         yield put({
@@ -35,7 +35,7 @@ export function* postUser(action) {
             method: 'post',
             headers: { 'Content-Type': 'application/json'},
             url: `${API_config.url}/api/auth/signup`,
-            data: JSON.stringify(action.data)
+            data: convertJSONToForm(action.data)
         }
         );
 

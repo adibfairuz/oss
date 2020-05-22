@@ -6,6 +6,7 @@ import {
 } from '../action/profile';
 import {filteredFetch} from '../utils/apiUtils';
 import API_config from '../config/API_config';
+import convertJSONToForm from '../utils/convertJSONToForm';
 
 
 export function* getProfile(action) {
@@ -36,7 +37,7 @@ export function* editProfile(action) {
             method: 'post',
             headers: { 'Content-Type': 'application/json'},
             url: `${API_config.url}/api/user/edit`,
-            data: JSON.stringify(action.data)
+            data: convertJSONToForm(action.data)
         }
         );
 
@@ -59,7 +60,7 @@ export function* editPassword(action) {
             method: 'put',
             headers: { 'Content-Type': 'application/json'},
             url: `${API_config.url}/api/user/password`,
-            data: JSON.stringify(action.data)
+            data: convertJSONToForm(action.data)
         }
         );
 

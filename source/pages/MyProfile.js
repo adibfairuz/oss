@@ -40,7 +40,9 @@ class MyProfile extends Component {
   }
   componentDidUpdate(prevProps, prevState){
     if (prevProps.user !== this.props.user) {
-      this.getProfile();
+      if (this.props.user !== null) {
+        this.getProfile();
+      }
     }
     if (prevProps.profileUpdated !== this.props.profileUpdated) {
       if (this.props.profile !== null) {
@@ -72,14 +74,14 @@ class MyProfile extends Component {
   }
   getProfile= () => {
     let data = {
-      email: this.props.user,
+      email: this.props.user.email,
       token: API_config.token
     }
     this.props.getProfile(data)
   }
   handleSave = () => {
     let data = {
-      email: this.props.user,
+      email: this.props.user.email,
       name: this.state.newName,
       token: API_config.token
     }

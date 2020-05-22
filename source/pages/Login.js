@@ -26,7 +26,7 @@ class Login extends Component {
     if (prevProps.user !== this.props.user) {
       if (this.props.user !== null) {
         if (this.props.user.status) {
-          this.props.setAsyncStorage({key: 'user', value: this.props.user.data.email});
+          this.props.setAsyncStorage({key: 'user', value: this.props.user.data});
           this.props.navigation.navigate('AppMenu');
         }else{
           alert(this.props.user.message)

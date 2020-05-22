@@ -2,21 +2,21 @@ import React from 'react';
 import { View, StyleSheet, TextInput, Text, Modal, ScrollView, Alert, TouchableOpacity,TouchableHighlight, Dimensions, ActivityIndicator } from 'react-native';
 import API_config from '../config/API_config';
 import { bindActionCreators } from 'redux';
-import { getConfigForm, editConfigForm, addConfigForm, deleteConfigForm } from '../action/configForm';
+import { getMaintenanceForm, deleteMaintenanceForm } from '../action/maintenanceForm';
 import { getAsyncStorage } from '../action/asyncStorage';
 import { connect } from 'react-redux';
 import { Feather, AntDesign } from '@expo/vector-icons';
 import { getProfile } from '../action/profile';
-import Card from './components/configForm/elements/Card';
+import Card from './components/maintenanceForm/elements/Card';
 
-class ConfigurationForm extends React.Component {
+class MaintenanceForm extends React.Component {
     constructor(props){
         super(props)
         this.state = {
             modalVisible: false,
-            configForm: [],
+            maintenanceForm: [],
             deletedId: '',
-            configFormAvailable: true
+            maintenanceFormAvailable: true
         }
     }
     componentDidMount(){
@@ -26,47 +26,22 @@ class ConfigurationForm extends React.Component {
         if (prevProps.user !== this.props.user) {
             if (this.props.user !== null) {
                 this.getProfile();
-                this.getConfigForm();
+                this.getMaintenanceForm();
             }
         }
-        // if (prevProps.profile !== this.props.profile) {
-        //     if (this.props.profile !== null) {
-        //         if (this.props.profile.status) {
-        //             this.getConfigForm();
-        //         }
-        //     }
-        // }
-        if (prevProps.configForm !== this.props.configForm) {
-            if (this.props.configForm !== null) {
-                if (this.props.configForm.status) {
-                    this.setState({configForm: this.props.configForm.data})
+        if (prevProps.maintenanceForm !== this.props.maintenanceForm) {
+            if (this.props.maintenanceForm !== null) {
+                if (this.props.maintenanceForm.status) {
+                    this.setState({maintenanceForm: this.props.maintenanceForm.data})
                 }else{
-                    this.setState({configFormAvailable: false})
+                    this.setState({maintenanceFormAvailable: false})
                 }
             }
         }
         if (prevProps.delete !== this.props.delete) {
             if (this.props.delete !== null) {
                 if (this.props.delete.status) {
-                    this.getConfigForm();
-                }
-            }
-        }
-        if (prevProps.configFormEdited !== this.props.configFormEdited) {
-            if (this.props.configFormEdited !== null) {
-                if (this.props.configFormEdited.status) {
-                    this.setState({configForm: []});
-                    this.setState({configFormAvailable: true});
-                    this.getConfigForm();
-                }
-            }
-        }
-        if (prevProps.configFormAdded !== this.props.configFormAdded) {
-            if (this.props.configFormAdded !== null) {
-                if (this.props.configFormAdded.status) {
-                    this.setState({configForm: []})
-                    this.setState({configFormAvailable: true});
-                    this.getConfigForm();
+                    this.getmaintenanceForm();
                 }
             }
         }
@@ -79,16 +54,15 @@ class ConfigurationForm extends React.Component {
         }
         this.props.getProfile(data)
     }
-    getConfigForm = () => {
+    getMaintenanceForm = () => {
         let data = {
-          user_id: this.props.user.id,
           token: API_config.token
         }
-        this.props.getConfigForm(data)
+        this.props.getMaintenanceForm(data)
     }
 
     static navigationOptions = {
-        headerTitle: "Configuration Form",
+        headerTitle: "Maintenance Form",
         title: 'FormScreen'
       };
     
@@ -109,11 +83,11 @@ class ConfigurationForm extends React.Component {
             token: API_config.token
           }
         this.setState({modalVisible: false})
-        this.setState({configForm: []})
-        this.props.deleteConfigForm(data);
+        this.setState({maintenanceForm: []})
+        this.props.deleteMaintenanceForm(data);
     }
     render() {
-        console.log('ini configggggggggg', this.props.configForm)
+        console.log('ini configggggggggg', this.props)
         //const {navigate} = this.props.navigation;
         return (
             <View style={{flex: 1}}>
@@ -153,11 +127,11 @@ class ConfigurationForm extends React.Component {
                 <ScrollView contentContainerStyle={{}}>
                     <View style={styles.container}>
                         {
-                            this.state.configFormAvailable 
+                            this.state.maintenanceFormAvailable 
                             ?
-                                this.state.configForm.length
+                                this.state.maintenanceForm.length
                                 ?
-                                this.state.configForm.map(data => {
+                                this.state.maintenanceForm.map(data => {
                                     return <Card modal={this.handleModal} data={data} {...this.props}/>
                                 })
                                 :
@@ -167,9 +141,6 @@ class ConfigurationForm extends React.Component {
                         }
                     </View>
                 </ScrollView>
-                <TouchableOpacity style={styles.fab} onPress={()=>this.props.navigation.navigate('AddConfigForm', { go_back_key: this.props.navigation.state.key })}>
-                    <AntDesign name="pluscircle" color="white" size={50} />
-                </TouchableOpacity>
             </View>
         );
     }
@@ -251,17 +222,15 @@ function mapStateToProps(state) {
     return {
         user: state.getAsyncStorage.data,
         profile: state.profile.data,
-        configFormAdded: state.addConfigForm.data,
-        configForm: state.configForm.data,
-        error: state.configForm.error,
-        loading: state.configForm.loading,
-        delete: state.deleteConfigForm.data,
-        configFormEdited: state.editConfigForm.data
+        maintenanceForm: state.maintenanceForm.data,
+        error: state.maintenanceForm.error,
+        loading: state.maintenanceForm.loading,
+        delete: state.deleteMaintenanceForm.data,
     };
   }
   
   function matchDispatchToProps(dispatch) {
-    return bindActionCreators({ addConfigForm, editConfigForm, getConfigForm, getAsyncStorage, getProfile, deleteConfigForm }, dispatch)
+    return bindActionCreators({ getAsyncStorage, getProfile, getMaintenanceForm, deleteMaintenanceForm }, dispatch)
   }
   
-  export default connect(mapStateToProps, matchDispatchToProps)(ConfigurationForm);
+  export default connect(mapStateToProps, matchDispatchToProps)(MaintenanceForm);

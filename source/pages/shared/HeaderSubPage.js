@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 export default class HeaderPage extends Component{
     back = () => {
-        console.log('back anjng', this.props.navigation)
         this.props.navigation.goBack(null);
     }
     render(){

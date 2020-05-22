@@ -7,6 +7,7 @@ import {
 } from '../action/configForm';
 import {filteredFetch} from '../utils/apiUtils';
 import API_config from '../config/API_config';
+import convertJSONToForm from '../utils/convertJSONToForm';
 
 
 export function* getConfigForm(action) {
@@ -61,7 +62,7 @@ export function* addConfigForm(action) {
             method: 'post',
             headers: { 'Content-Type': 'application/json'},
             url: `${API_config.url}/api/form`,
-            data: JSON.stringify(action.data)
+            data: convertJSONToForm(action.data)
         }
         );
 

@@ -13,6 +13,7 @@ import MyProfileScreen from '../pages/MyProfile';
 import ChangePasswordScreen from '../pages/ChangePassword';
 import EditProfileScreen from '../pages/EditProfile';
 import ConfigurationFormScreen from '../pages/Form';
+import MaintenanceFormScreen from '../pages/MaintenanceForm';
 import Logout from '../pages/Logout';
 import AddConfigFormScreen from '../pages/components/configForm/AddConfigForm';
 import EditConfigFormScreen from '../pages/components/configForm/editConfigForm';
@@ -108,6 +109,27 @@ const ConfigurationFormNavigator = createStackNavigator({
     }
 }, 
 );
+const MaintenanceFormNavigator = createStackNavigator({
+    MaintenanceForm: { 
+        screen: MaintenanceFormScreen,
+        navigationOptions: ({ navigation }) => {
+            return{
+                headerTitle:() => <HeaderPage navigation = {navigation} title = "Maintenance Form"/>,
+           }
+        }
+    },
+}, {
+    navigationOptions: {
+        headerStyle : {
+            backgroundColor: '#512DA8'
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            color: '#fff'
+        }
+    }
+}, 
+);
 const LogoutNavigator = createStackNavigator({
     Logout: { 
         screen: Logout,
@@ -160,6 +182,14 @@ const DrawerNavigator = createDrawerNavigator(
             screen: ConfigurationFormNavigator,
             navigationOptions: {
                 title: "Configuration Form",
+                drawerIcon: ({tintColor}) => <Feather name="edit" size={16} color={tintColor} />
+            }
+        },
+
+        MaintenanceForm: {
+            screen: MaintenanceFormNavigator,
+            navigationOptions: {
+                title: "Maintenance Form",
                 drawerIcon: ({tintColor}) => <Feather name="edit" size={16} color={tintColor} />
             }
         },

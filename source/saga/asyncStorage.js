@@ -12,7 +12,7 @@ export function* getAsyncStorage(action){
         console.log('data ASYNC_STORAGEhhhh', data)
         yield put({
             type: GET_ASYNC_STORAGE_SUCCESS,
-            data: data
+            data: JSON.parse(data)
         });
     } catch (error) {
         yield put({
@@ -23,7 +23,7 @@ export function* getAsyncStorage(action){
   };
 export function* setAsyncStorage(action){
     try {
-        let data = yield AsyncStorage.setItem(action.data.key, action.data.value);
+        let data = yield AsyncStorage.setItem(action.data.key, JSON.stringify(action.data.value));
         console.log('saga setAsyncccc', data);
         yield put({
             type: SET_ASYNC_STORAGE_SUCCESS,

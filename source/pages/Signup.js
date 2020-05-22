@@ -113,6 +113,7 @@ class Signup extends Component {
     }
 
     render() {
+      console.log(this.props)
         const { navigate } = this.props.navigation;
         return(
             <View style= {styles.container}>
@@ -149,7 +150,7 @@ class Signup extends Component {
                     onChangeText = {(text) => this.setState({user_password: text})} />
                 </View>
                 
-                  <TouchableOpacity disabled = { this.state.disabled } style = {styles.button} onPress= { this.insertNewUser }>
+                  <TouchableOpacity style = {styles.button} onPress= { this.insertNewUser }>
                     {
                       this.props.loading
                       ?

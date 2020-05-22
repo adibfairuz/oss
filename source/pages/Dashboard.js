@@ -1,11 +1,46 @@
 import React, { Component } from 'react';
-import { TouchableOpacity, Image, SafeAreaView, ScrollView, StyleSheet, Dimensions, AsyncStorage } from 'react-native';
+import { TouchableOpacity, Image, SafeAreaView, ScrollView, StyleSheet, Dimensions, View, Button} from 'react-native';
 import { LineChart } from "react-native-chart-kit";
+import { VictoryArea, VictoryBar, VictoryChart, VictoryTheme,VictoryLine } from "victory-native";
 
 import { Block, Card, Text, Icon, Label } from '../components';
 import * as theme from '../constants/theme';
+import API_config from '../config/API_config';
+import { bindActionCreators } from 'redux';
+import { getDownlink, getUplink, getModem, getHeadline } from '../action/dashboard';
+import { getAsyncStorage } from '../action/asyncStorage';
+import { connect } from 'react-redux';
+
+const monthNames = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+function Unix_timestamp(t)
+{
+var dt = new Date(t*1000);
+var hr = dt.getHours();
+var m = dt.getMinutes();
+var s = dt.getSeconds();
+var time = hr + ":" + m;
+return time;  
+}
+
+function Nowdate(t)
+{
+var dt = new Date(t*1000);
+var hr = dt.getDate();
+var m = dt.getMonth();
+var s = dt.getFullYear();
+var time = hr + " " + monthNames[m] + " " + s;
+return time;  
+}
 
 const styles = StyleSheet.create({
+    secontainer: {
+      marginTop: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+      },
   overview: {
     flex: 1,
     flexDirection: 'column',
@@ -80,68 +115,186 @@ const styles = StyleSheet.create({
   },
 });
 
-const data = {
-  labels: ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'],
-  datasets: [
-    {
-      data: [0, 10, 20, 50, 45, 28, 36, 80, 99, 120, 86, 55, 43, 39, 78, 102, 122, 130, 110, 101, 99, 78, 53, 22],
-      strokeWidth: 2, // optional
+
+class Dashboard extends Component {
+  static navigationOptions = {
+    headerRightContainerStyle: {
+      paddingRight: 24
     },
-  ],
-};
-
-export default class Dashboard extends Component {
-  getAsyncStorage = async (key) => {
-    try {
-      const value = await AsyncStorage.getItem(key);
-      if (value !== null) {
-        console.log('dashboard adda storageee', value)
-      }else{
-        console.log('dashboard null storageee', value)
-      }
-    } catch (error) {
-      console.log('dashboard error storageee', value)
-    }
-};
-
-  componentDidMount(){
-    this.getAsyncStorage('user');
+    headerRight: (
+      <TouchableOpacity><Icon notification /></TouchableOpacity>
+    )
   }
-  
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      a : 14,
+    b : 13,
+    c : 12,
+    d : 11,
+    e : 10,
+    modemnow : "Modem 1",
+    data: [],
+    isLoading1: true,
+    isLoading2: true,
+    isLoading3: true,
+    
+    downlink: [],
+    uplink: [],
+    modem: [],
+    headline: [],
+    }
+  } 
+
+  updateRouter1 = () => {
+    this.setState({     
+      a : 14,
+      b : 13,
+      c : 12,
+      d : 11,
+      e : 10,
+      modemnow : "Modem 1"
+    })
+  }
+
+  updateRouter2 = () => {
+    this.setState({     
+      a : 9,
+      b : 8,
+      c : 7,
+      d : 6,
+      e : 5,
+      modemnow : "Modem 2"
+    })
+  }
+
+  updateRouter3 = () => {
+    this.setState({     
+        a : 4,
+        b : 3,
+        c : 2,
+        d : 1,
+        e : 0,
+        modemnow : "Modem 3"
+      })
+  }
+
+  componentDidMount() {
+    this.getDownlink();
+    this.getUplink();
+    this.getModem();
+    this.getHeadline();
+  }
+
+  componentDidUpdate(prevProps, prevState){
+    if (prevProps.downlink !== this.props.downlink) {
+      if (this.props.downlink !== null) {
+        if (this.props.downlink.status) {
+          this.setState({
+            downlink: this.props.downlink.data,
+            isLoading1: false
+          })
+        }
+      }
+    }
+    if (prevProps.uplink !== this.props.uplink) {
+      if (this.props.uplink !== null) {
+        if (this.props.uplink.status) {
+          this.setState({
+            uplink: this.props.uplink.data,
+            isLoading2: false
+          })
+        }
+      }
+    }
+    if (prevProps.modem !== this.props.modem) {
+      if (this.props.modem !== null) {
+        if (this.props.modem.status) {
+          this.setState({
+            modem: this.props.modem.data,
+            isLoading3: false
+          })
+        }
+      }
+    }
+    if (prevProps.headline !== this.props.headline) {
+      if (this.props.headline !== null) {
+        if (this.props.headline.status) {
+          this.setState({headline: this.props.headline.data})
+        }
+      }
+    }
+  }
+
+  getDownlink = () => {
+    let data = {
+      token: API_config.token
+    }
+    this.props.getDownlink(data);
+  }     
+  getUplink = () => {
+    let data = {
+      token: API_config.token
+    }
+    this.props.getUplink(data);
+  }     
+  getModem = () => {
+    let data = {
+      token: API_config.token
+    }
+    this.props.getModem(data);
+  }     
+  getHeadline = () => {
+    let data = {
+      token: API_config.token
+    }
+    this.props.getHeadline(data);
+  }     
+
   render() {
+      if(this.state.isLoading1 || this.state.isLoading2 || this.state.isLoading3){
+        return <View><Text>Loading...</Text></View>
+      }
+
     return (
       <SafeAreaView style={styles.overview}>
         <ScrollView contentContainerStyle={{ paddingVertical: 25 }}>
+        <View style = {styles.secontainer}>        
+              <Button onPress={this.updateRouter1} title="Modem 1" color="#841584" />
+              <Button onPress={this.updateRouter2} title="Modem 2" color="#841584" />
+              <Button onPress={this.updateRouter3} title="Modem 3" color="#841584" />
+              </View>
 
           <Block row style={[styles.margin, { marginTop: 18 }]}>
             <Card middle style={{ marginRight: 7 }}>
               <Icon sqf />
-              <Text h2 style={{ marginTop: 17 }}>1,42</Text>
+              <Text h2 style={{ marginTop: 17 }}>{this.state.downlink[this.state.e].sqf}</Text>
               <Text paragraph color="gray">LATEST SQF</Text>
-              <Text paragraph color="blue">10 MAY 2020 </Text>
+              <Text paragraph color="blue">{Nowdate(this.state.downlink[this.state.e].timestamp)}</Text>
             </Card>
             
             <Card middle style={{ marginLeft: 7 }}>
               <Icon attenuation />
-              <Text h2 style={{ marginTop: 17 }}>2.4 dB</Text>
+              <Text h2 style={{ marginTop: 17 }}>{this.state.uplink[this.state.e].power_atten}</Text>
               <Text paragraph color="gray">LATEST ATTENUATION</Text>
-              <Text paragraph color="blue">10 MAY 2020 </Text>
+              <Text paragraph color="blue">{Nowdate(this.state.uplink[this.state.e].timestamp)}</Text>
             </Card>
           </Block>
 
           <Block row style={[styles.margin, { marginTop: 18 }]}>
             <Card middle style={{ marginRight: 7 }}>
               <Icon time />
-              <Text h2 style={{ marginTop: 17 }}>03:50:48</Text>
+              <Text h2 style={{ marginTop: 17 }}>{this.state.modem[this.state.e].uptime}</Text>
               <Text paragraph color="gray">UPTIME</Text>
-              <Text paragraph color="blue">10 MAY 2020 </Text>
+              <Text paragraph color="blue">{Nowdate(this.state.modem[this.state.e].timestamp)}</Text>
             </Card>
             
             <Card middle style={{ marginLeft: 7 }}>
               <Icon memory />
-              <Text h2 style={{ marginTop: 17 }}>615020 KB</Text>
+              <Text h2 style={{ marginTop: 17 }}>{this.state.modem[this.state.e].memory}</Text>
               <Text paragraph color="gray">AVAILABLE MEMORY</Text>
-              <Text paragraph color="blue">10 MAY 2020 </Text>
+              <Text paragraph color="blue">{Nowdate(this.state.downlink[this.state.e].timestamp)}</Text>
             </Card>
           </Block>
               
@@ -150,41 +303,30 @@ export default class Dashboard extends Component {
             style={[styles.margin, { marginTop: 18 }]}>
             <Block row right>
               <Block flex={2} row center right>
-                <Text paragraph color="blue">10 MAY 2020</Text>
+                <Text paragraph color="blue">{Nowdate(this.state.downlink[this.state.e].timestamp)}</Text>
               </Block>
             </Block>
             <Block>
               <Text>Chart</Text>
-              <LineChart
-                data={data}
-                width={Dimensions.get("window").width -108} // from react-native
-                height={240}
+                            <VictoryChart width={300} minDomain={{ y: 100 }} maxDomain={{ y: 170 }} theme={VictoryTheme.material} domainPadding={15}>
                 
-                // yAxisSuffix="k"
-                // yAxisInterval={1}
-                chartConfig={{
-                  backgroundColor: '#043e62',
-                  backgroundGradientFrom: '#54b9f8',
-                  backgroundGradientTo: '#ceebfd',
-                  decimalPlaces: 0, // optional, defaults to 2dp
-                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                  style: {
-                    borderRadius: 16,
-                  },
-                  propsForDots: {
-                    r: "4",
-                    strokeWidth: "1",
-                    stroke: "#fff"
-                  }
-                }}
-                bezier
-                style={{
-                  marginVertical: 10,
-                  marginHorizontal: 5,
-                  borderRadius: 12,
+                <VictoryLine
 
-                }}
-              ></LineChart>
+                    style={{
+                      parent: { border: "3px solid #ccc"},
+                      stroke: "#073060",
+                      strokeWidth: 15
+                    }}
+                    data={[
+                      {  x: Unix_timestamp(this.state.downlink[this.state.a].timestamp), y: this.state.downlink[this.state.a].sqf, label: this.state.downlink[this.state.a].sqf},
+                      {  x: Unix_timestamp(this.state.downlink[this.state.b].timestamp), y: this.state.downlink[this.state.b].sqf, label: this.state.downlink[this.state.b].sqf},
+                      {  x: Unix_timestamp(this.state.downlink[this.state.c].timestamp), y: this.state.downlink[this.state.c].sqf, label: this.state.downlink[this.state.c].sqf},
+                      {  x: Unix_timestamp(this.state.downlink[this.state.d].timestamp), y: this.state.downlink[this.state.d].sqf, label: this.state.downlink[this.state.d].sqf},
+                      {  x: Unix_timestamp(this.state.downlink[this.state.e].timestamp), y: this.state.downlink[this.state.e].sqf, label: this.state.downlink[this.state.e].sqf}
+                      ]}
+                      > 
+                </VictoryLine>
+              </VictoryChart>
             </Block>
           </Card>
           <Card
@@ -192,41 +334,30 @@ export default class Dashboard extends Component {
             style={[styles.margin, { marginTop: 18 }]}>
             <Block row right>
               <Block flex={2} row center right>
-                <Text paragraph color="blue">10 MAY 2020</Text>
+                <Text paragraph color="blue">{Nowdate(this.state.downlink[this.state.e].timestamp)}</Text>
               </Block>
               </Block>
             <Block>
               <Text>Chart</Text>
-              <LineChart
-                data={data}
-                width={Dimensions.get("window").width -108} // from react-native
-                height={240}
+              <VictoryChart width={300} maxDomain={{ y: 5 }} theme={VictoryTheme.material} domainPadding={15}>
                 
-                // yAxisSuffix="k"
-                // yAxisInterval={1}
-                chartConfig={{
-                  backgroundColor: '#043e62',
-                  backgroundGradientFrom: '#54b9f8',
-                  backgroundGradientTo: '#ceebfd',
-                  decimalPlaces: 0, // optional, defaults to 2dp
-                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                  style: {
-                    borderRadius: 16,
-                  },
-                  propsForDots: {
-                    r: "4",
-                    strokeWidth: "1",
-                    stroke: "#fff"
-                  }
-                }}
-                bezier
-                style={{
-                  marginVertical: 10,
-                  marginHorizontal: 5,
-                  borderRadius: 12,
+                <VictoryLine
 
-                }}
-              ></LineChart>
+                    style={{
+                      parent: { border: "3px solid #ccc"},
+                      stroke: "#073060",
+                      strokeWidth: 15
+                    }}
+                    data={[
+                      {  x: Unix_timestamp(this.state.uplink[this.state.a].timestamp), y: this.state.uplink[this.state.a].power_atten, label: this.state.uplink[this.state.a].power_atten},
+                      {  x: Unix_timestamp(this.state.uplink[this.state.b].timestamp), y: this.state.uplink[this.state.b].power_atten, label: this.state.uplink[this.state.b].power_atten},
+                      {  x: Unix_timestamp(this.state.uplink[this.state.c].timestamp), y: this.state.uplink[this.state.c].power_atten, label: this.state.uplink[this.state.c].power_atten},
+                      {  x: Unix_timestamp(this.state.uplink[this.state.d].timestamp), y: this.state.uplink[this.state.d].power_atten, label: this.state.uplink[this.state.d].power_atten},
+                      {  x: Unix_timestamp(this.state.uplink[this.state.e].timestamp), y: this.state.uplink[this.state.e].power_atten, label: this.state.uplink[this.state.e].power_atten}
+                      ]}
+                      > 
+                </VictoryLine>
+              </VictoryChart>
             </Block>
           </Card>
 
@@ -236,3 +367,19 @@ export default class Dashboard extends Component {
     )
   }
 }
+
+function mapStateToProps(state) {
+  return {
+      user: state.getAsyncStorage.data,
+      downlink: state.downlink.data,
+      uplink: state.uplink.data,
+      modem: state.modem.data,
+      headline: state.headline.data,
+  };
+}
+
+function matchDispatchToProps(dispatch) {
+  return bindActionCreators({ getAsyncStorage, getDownlink, getUplink, getModem, getHeadline }, dispatch)
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(Dashboard);

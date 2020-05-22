@@ -6,6 +6,8 @@ import { getUser, postUser } from './user';
 import {getProfile, editProfile, editPassword} from './profile';
 import { getAsyncStorage, setAsyncStorage, removeAsyncStorage } from './asyncStorage';
 import {getConfigForm, editConfigForm, addConfigForm, deleteConfigForm} from './configForm';
+import {getMaintenanceForm, deleteMaintenanceForm} from './maintenanceForm';
+import { getDownlink, getUplink, getModem, getHeadline } from './dashboard';
 
 const reducers = {
     getAsyncStorage,
@@ -19,7 +21,13 @@ const reducers = {
     configForm: getConfigForm,
     editConfigForm,
     addConfigForm,
-    deleteConfigForm
+    deleteConfigForm,
+    maintenanceForm: getMaintenanceForm,
+    deleteMaintenanceForm,
+    downlink: getDownlink,
+    uplink: getUplink,
+    modem: getModem,
+    headline: getHeadline
     // authReducer,
     // form: formReducer
 };

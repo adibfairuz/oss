@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, Text, KeyboardAvoidingView, Picker, ScrollView, Alert, TouchableOpacity, BackHandler } from 'react-native';
+import { View, StyleSheet, TextInput, Text, KeyboardAvoidingView, Picker, ScrollView, Alert, TouchableOpacity, BackHandler, Dimensions } from 'react-native';
 import { Button } from 'react-native-elements';
 import DatePicker from 'react-native-datepicker';
 import { DocumentPicker } from 'expo';
@@ -10,7 +10,6 @@ import { getConfigForm, editConfigForm, addConfigForm } from '../../../action/co
 import { getAsyncStorage } from '../../../action/asyncStorage';
 import { connect } from 'react-redux';
 import { MaterialIcons } from '@expo/vector-icons';
-import { getProfile } from '../../../action/profile';
 import HeaderSubPage from '../../shared/HeaderSubPage'
 
 const initialState = {
@@ -28,23 +27,13 @@ const initialState = {
     konfigurasi:"",
     date_created:"",
     edited_at:"",
-    beam9:"",
-    beam10:"",
-    beam12:"",
-    beam13:"",
-    beam15:"",
-    beam16:"",
-    beam18:"",
-    modem: ""
+    beam: ""
 }
 class ConfigurationForm extends React.Component {
     componentDidMount(){
         this.props.getAsyncStorage('user');
     }
     componentDidUpdate(prevProps, prevState){
-        if (prevProps.user !== this.props.user) {
-          this.getProfile();
-        }
         if (prevProps.configFormAdded !== this.props.configFormAdded) {
             if (this.props.configFormAdded !== null) {
                 if (this.props.configFormAdded.status) {
@@ -53,13 +42,6 @@ class ConfigurationForm extends React.Component {
                 }
             }
         }
-    }
-    getProfile= () => {
-        let data = {
-          email: this.props.user,
-          token: API_config.token
-        }
-        this.props.getProfile(data)
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -94,19 +76,12 @@ class ConfigurationForm extends React.Component {
     }
     handleSave = () => {
         const data = {
-            user_id: this.props.profile.data.id,
+            user_id: this.props.user.id,
             lokasi: this.state.lokasi,
-            tanggalpemasangan: this.state.tanggalpemasangan,
+            tanggalpemasangan: new Date(this.state.tanggalpemasangan).getTime(),
             namapelanggan: this.state.namapelanggan,
             modemid: this.state.modem,
-            beam: "",
-            beam9: this.state.checkbox1, 
-            beam10: this.state.checkbox2, 
-            beam12: this.state.checkbox3, 
-            beam13: this.state.checkbox4, 
-            beam15: this.state.checkbox5, 
-            beam16: this.state.checkbox6, 
-            beam18: this.state.checkbox7, 
+            beam: this.state.beam,
             token: API_config.token
         }
         this.props.addConfigForm(data);
@@ -179,54 +154,21 @@ class ConfigurationForm extends React.Component {
                             <Text style={styles.rowHeaderTitle}>
                             Konfigurasi 
                             </Text>
-                            <View style={{ flexDirection: 'row' }}>
-                                <CheckBox
-                                value={this.state.checkbox1}
-                                onValueChange={() => this.setState({ checkbox1: !this.state.checkbox1 })}
-                                />
-                                <Text style={{marginTop: 5}}> Beam9 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>
-                                <CheckBox
-                                value={this.state.checkbox2}
-                                onValueChange={() => this.setState({ checkbox2: !this.state.checkbox2 })}
-                                />                         
-                                <Text style={{marginTop: 5}}> Beam10 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>  
-                                <CheckBox
-                                value={this.state.checkbox3}
-                                onValueChange={() => this.setState({ checkbox3: !this.state.checkbox3 })}
-                                />                         
-                                <Text style={{marginTop: 5}}> Beam12 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>   
-                                <CheckBox
-                                value={this.state.checkbox4}
-                                onValueChange={() => this.setState({ checkbox4: !this.state.checkbox4 })}
-                                />
-                                <Text style={{marginTop: 5}}> Beam13 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>  
-                                <CheckBox
-                                value={this.state.checkbox5}
-                                onValueChange={() => this.setState({ checkbox5: !this.state.checkbox5 })}
-                                />
-                                <Text style={{marginTop: 5}}> Beam15 </Text>
-                            </View>    
-                            <View style={{ flexDirection: 'row' }}>  
-                                <CheckBox
-                                value={this.state.checkbox6}
-                                onValueChange={() => this.setState({ checkbox6: !this.state.checkbox6 })}
-                                />
-                                <Text style={{marginTop: 5}}> Beam16 </Text>
-                            </View>
-                            <View style={{ flexDirection: 'row' }}>  
-                                <CheckBox
-                                value={this.state.checkbox7}
-                                onValueChange={() => this.setState({ checkbox7: !this.state.checkbox7})}
-                                />
-                                <Text style={{marginTop: 5}}> Beam18 </Text>
+                            <View style={styles.inputBox}>
+                                <Picker
+                                    selectedValue={this.state.beam}
+                                    style={{flex: 1, height: 34}}
+                                    onValueChange={(itemValue, itemIndex) => this.setState({beam: itemValue})}
+                                >
+                                    <Picker.Item label="-" value="" />
+                                    <Picker.Item label="beam9" value="beam9" />
+                                    <Picker.Item label="beam10" value="beam10" />
+                                    <Picker.Item label="beam12" value="beam12" />
+                                    <Picker.Item label="beam13" value="beam13" />
+                                    <Picker.Item label="beam15" value="beam15" />
+                                    <Picker.Item label="beam16" value="beam16" />
+                                    <Picker.Item label="beam18" value="beam18" />
+                                </Picker>
                             </View>
                             <Text style={styles.rowHeaderTitle}>
                                 Modem id
@@ -257,6 +199,7 @@ class ConfigurationForm extends React.Component {
 
 const styles = StyleSheet.create({
     container: {
+        minHeight: Dimensions.get("window").height,
         flexGrow: 1,
         backgroundColor: '#4e73df',
         alignItems: 'center',
@@ -368,7 +311,6 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
     return {
         user: state.getAsyncStorage.data,
-        profile: state.profile.data,
         configFormAdded: state.addConfigForm.data,
         configForm: state.configForm.data,
         error: state.configForm.error,
@@ -377,7 +319,7 @@ function mapStateToProps(state) {
   }
   
   function matchDispatchToProps(dispatch) {
-    return bindActionCreators({ addConfigForm, editConfigForm, getConfigForm, getAsyncStorage, getProfile }, dispatch)
+    return bindActionCreators({ addConfigForm, editConfigForm, getConfigForm, getAsyncStorage }, dispatch)
   }
   
   export default connect(mapStateToProps, matchDispatchToProps)(ConfigurationForm);
