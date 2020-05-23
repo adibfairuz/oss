@@ -50,7 +50,7 @@ export default class Card extends Component {
                     </View>
                     <View style={styles.field}>
                         <Text style={styles.key}>Tgl Pemasangan</Text>
-                        <Text style={styles.value}>{moment(this.props.data.tanggalpemasangan, 'x').format("DD-MM-YYYY")}</Text>
+                        <Text style={styles.value}>{moment(this.props.data.tanggalpemasangan*1000).format("DD-MM-YYYY")}</Text>
                     </View>
                     <View style={styles.field}>
                         <Text style={styles.key}>Beam</Text>

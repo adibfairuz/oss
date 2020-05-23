@@ -94,7 +94,7 @@ class EditConfigurationForm extends React.Component {
         const data = {
             id: this.state.id,
             lokasi: this.state.lokasi,
-            tanggalpemasangan: this.state.tanggalpemasangan.includes('-') ? new Date(this.state.tanggalpemasangan).getTime() : this.state.tanggalpemasangan,
+            tanggalpemasangan: this.state.tanggalpemasangan.includes('-') ? new Date(this.state.tanggalpemasangan).getTime() / 1000 : this.state.tanggalpemasangan,
             namapelanggan: this.state.namapelanggan,
             modemid: this.state.modem,
             beam: this.state.beam,

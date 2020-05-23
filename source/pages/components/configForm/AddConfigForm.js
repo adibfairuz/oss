@@ -78,7 +78,7 @@ class ConfigurationForm extends React.Component {
         const data = {
             user_id: this.props.user.id,
             lokasi: this.state.lokasi,
-            tanggalpemasangan: new Date(this.state.tanggalpemasangan).getTime(),
+            tanggalpemasangan: new Date(this.state.tanggalpemasangan).getTime() / 1000,
             namapelanggan: this.state.namapelanggan,
             modemid: this.state.modem,
             beam: this.state.beam,
@@ -88,7 +88,6 @@ class ConfigurationForm extends React.Component {
     }
 
     render() {
-        console.log(this.props)
         //const {navigate} = this.props.navigation;
         return (
             // <KeyboardAvoidingView style={{flex: 1}} behavior="padding" enabled>

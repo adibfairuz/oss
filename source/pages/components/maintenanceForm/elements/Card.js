@@ -26,7 +26,7 @@ export default class Card extends Component {
                 </View>
                 <View style={styles.field}>
                     <Text style={styles.key}>Tgl Pengaduan</Text>
-                    <Text style={styles.value}>{moment(this.props.data.tanggalpengaduan, 'x').format("DD-MM-YYYY")}</Text>
+                    <Text style={styles.value}>{moment(this.props.data.tanggalpengaduan*1000).format("DD-MM-YYYY")}</Text>
                 </View>
                 <View style={styles.field}>
                     <Text style={styles.key}>Pengaduan</Text>

@@ -119,7 +119,7 @@ class MyProfile extends Component {
                         <Text style={styles.textimg}> {this.state.name} </Text>
                       }
                       <Text style={styles.textimg}> {this.state.email} </Text>
-                      <Text style={styles.textemail}> Member since {moment(this.state.date_created, "x").format("DD MMMM YYYY")}  </Text>
+                      <Text style={styles.textemail}> Member since {moment(this.state.date_created*1000).format("DD MMMM YYYY")}  </Text>
                       {
                         this.state.edit
                         ?

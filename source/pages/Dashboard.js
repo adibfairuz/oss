@@ -124,6 +124,21 @@ const styles = StyleSheet.create({
     fontSize:14,
     fontWeight:'500'
   },
+  filterTime: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+    overflow: 'hidden'
+  },
+  filterTimeButton: {
+    backgroundColor: '#6c757d',
+    padding: 18
+  },
+  filterTimeText: {
+    color: '#ffff'
+  }
 });
 
 
@@ -155,7 +170,9 @@ class Dashboard extends Component {
       uplink: [],
       modem: [],
       headline: [],
-      router: ''
+      router: '',
+      downlinkChart: 'today',
+      uplinkChart: 'today'
     }
   } 
 
@@ -202,7 +219,7 @@ class Dashboard extends Component {
   componentDidUpdate(prevProps, prevState){
     if (prevProps.downlink !== this.props.downlink) {
       if (this.props.downlink !== null) {
-        if (this.props.downlink.status) {
+        if (this.props.downlink) {
           this.setState({
             downlink: this.props.downlink.data,
             isLoading1: false
@@ -212,7 +229,7 @@ class Dashboard extends Component {
     }
     if (prevProps.uplink !== this.props.uplink) {
       if (this.props.uplink !== null) {
-        if (this.props.uplink.status) {
+        if (this.props.uplink) {
           this.setState({
             uplink: this.props.uplink.data,
             isLoading2: false
@@ -239,15 +256,31 @@ class Dashboard extends Component {
     }
   }
 
-  getDownlink = () => {
-    let data = {
-      token: API_config.token
+  getDownlink = (type = 'today') => {
+    let data = {}
+    if (type === null) {
+      data = {
+        token: API_config.token
+      }
+    }else{
+      data = {
+        token: API_config.token,
+        type: type
+      }
     }
     this.props.getDownlink(data);
   }     
-  getUplink = () => {
-    let data = {
-      token: API_config.token
+  getUplink = (type = 'today') => {
+    let data = {}
+    if (type === null) {
+      data = {
+        token: API_config.token
+      }
+    }else{
+      data = {
+        token: API_config.token,
+        type: type
+      }
     }
     this.props.getUplink(data);
   }     
@@ -279,9 +312,67 @@ class Dashboard extends Component {
       default:
         break;
     }
-  }     
+  }   
+  
+  handleDownlinkChart = {
+    today: () => {
+      this.setState({downlinkChart: 'today'});
+      this.getDownlink('today')
+    },
+    yesterday: () => {
+      this.setState({downlinkChart: 'yesterday'});
+      this.getDownlink('yesterday')
+    },
+    week: () => {
+      this.setState({downlinkChart: 'week'});
+      this.getDownlink('week')
+    },
+  }
+  handleUplinkChart = {
+    today: () => {
+      this.setState({uplinkChart: 'today'});
+      this.getUplink('today')
+    },
+    yesterday: () => {
+      this.setState({uplinkChart: 'yesterday'});
+      this.getUplink('yesterday')
+    },
+    week: () => {
+      this.setState({uplinkChart: 'week'});
+      this.getUplink('week')
+    },
+  }
 
+  dataDownlink = () => {
+    if (this.state.downlinkChart === 'week') {
+      return [
+          {  x: this.state.downlink.length ? this.state.downlink[2].timestamp : 0, y: parseInt(this.state.downlink.length ? this.state.downlink[2].sqf ? this.state.downlink[2].sqf : 0 : 0), label: this.state.downlink.length ? this.state.downlink[2].sqf ? this.state.downlink[2].sqf : 0 : 0},
+          {  x: this.state.downlink.length ? this.state.downlink[3].timestamp : 0, y: parseInt(this.state.downlink.length ? this.state.downlink[3].sqf ? this.state.downlink[3].sqf : 0 : 0), label: this.state.downlink.length ? this.state.downlink[3].sqf ? this.state.downlink[3].sqf : 0 : 0},
+          {  x: this.state.downlink.length ? this.state.downlink[4].timestamp : 0, y: parseInt(this.state.downlink.length ? this.state.downlink[4].sqf ? this.state.downlink[4].sqf : 0 : 0), label: this.state.downlink.length ? this.state.downlink[4].sqf ? this.state.downlink[4].sqf : 0 : 0},
+          {  x: this.state.downlink.length ? this.state.downlink[5].timestamp : 0, y: parseInt(this.state.downlink.length ? this.state.downlink[5].sqf ? this.state.downlink[5].sqf : 0 : 0), label: this.state.downlink.length ? this.state.downlink[5].sqf ? this.state.downlink[5].sqf : 0 : 0},
+          {  x: this.state.downlink.length ? this.state.downlink[6].timestamp : 0, y: parseInt(this.state.downlink.length ? this.state.downlink[6].sqf ? this.state.downlink[6].sqf : 0 : 0), label: this.state.downlink.length ? this.state.downlink[6].sqf ? this.state.downlink[6].sqf : 0 : 0}
+          ]
+    } else {
+      return [
+        {  x: Unix_timestamp(this.state.downlink.length ? this.state.downlink[this.state.a].timestamp : 0), y: parseInt(this.state.downlink.length ? this.state.downlink[this.state.a].sqf : 0), label: this.state.downlink.length ? this.state.downlink[this.state.a].sqf : 0},
+        {  x: Unix_timestamp(this.state.downlink.length ? this.state.downlink[this.state.b].timestamp : 0), y: parseInt(this.state.downlink.length ? this.state.downlink[this.state.b].sqf : 0), label: this.state.downlink.length ? this.state.downlink[this.state.b].sqf : 0},
+        {  x: Unix_timestamp(this.state.downlink.length ? this.state.downlink[this.state.c].timestamp : 0), y: parseInt(this.state.downlink.length ? this.state.downlink[this.state.c].sqf : 0), label: this.state.downlink.length ? this.state.downlink[this.state.c].sqf : 0},
+        {  x: Unix_timestamp(this.state.downlink.length ? this.state.downlink[this.state.d].timestamp : 0), y: parseInt(this.state.downlink.length ? this.state.downlink[this.state.d].sqf : 0), label: this.state.downlink.length ? this.state.downlink[this.state.d].sqf : 0},
+        {  x: Unix_timestamp(this.state.downlink.length ? this.state.downlink[this.state.e].timestamp : 0), y: parseInt(this.state.downlink.length ? this.state.downlink[this.state.e].sqf : 0), label: this.state.downlink.length ? this.state.downlink[this.state.e].sqf : 0}
+        ]
+    }
+  }
+  dataUplink = () => {
+    return [
+      {  x: Unix_timestamp(this.state.uplink.length ? this.state.uplink[this.state.a].timestamp : 0), y: this.state.uplink.length ? this.state.uplink[this.state.a].power_atten : 0, label: this.state.uplink.length ? this.state.uplink[this.state.a].power_atten : 0},
+      {  x: Unix_timestamp(this.state.uplink.length ? this.state.uplink[this.state.b].timestamp : 0), y: this.state.uplink.length ? this.state.uplink[this.state.b].power_atten : 0, label: this.state.uplink.length ? this.state.uplink[this.state.b].power_atten : 0},
+      {  x: Unix_timestamp(this.state.uplink.length ? this.state.uplink[this.state.c].timestamp : 0), y: this.state.uplink.length ? this.state.uplink[this.state.c].power_atten : 0, label: this.state.uplink.length ? this.state.uplink[this.state.c].power_atten : 0},
+      {  x: Unix_timestamp(this.state.uplink.length ? this.state.uplink[this.state.d].timestamp : 0), y: this.state.uplink.length ? this.state.uplink[this.state.d].power_atten : 0, label: this.state.uplink.length ? this.state.uplink[this.state.d].power_atten : 0},
+      {  x: Unix_timestamp(this.state.uplink.length ? this.state.uplink[this.state.e].timestamp : 0), y: this.state.uplink.length ? this.state.uplink[this.state.e].power_atten : 0, label: this.state.uplink.length ? this.state.uplink[this.state.e].power_atten : 0}
+      ]
+  }
   render() {
+    console.log(this.state)
       if(this.state.isLoading1 || this.state.isLoading2 || this.state.isLoading3){
         return <View><Text>Loading...</Text></View>
       }
@@ -305,16 +396,16 @@ class Dashboard extends Component {
           <Block row style={[styles.margin, { marginTop: 18 }]}>
             <Card middle style={{ marginRight: 7 }}>
               <Icon sqf />
-              <Text h2 style={{ marginTop: 17 }}>{this.state.downlink[this.state.e].sqf}</Text>
+              <Text h2 style={{ marginTop: 17 }}>{this.state.downlink.length ? this.state.downlink[this.state.e].sqf : 0}</Text>
               <Text paragraph color="gray">LATEST SQF</Text>
-              <Text paragraph color="blue">{Nowdate(this.state.downlink[this.state.e].timestamp)}</Text>
+              <Text paragraph color="blue">{Nowdate(this.state.downlink.length ? this.state.downlink[this.state.e].timestamp : 0)}</Text>
             </Card>
             
             <Card middle style={{ marginLeft: 7 }}>
               <Icon attenuation />
-              <Text h2 style={{ marginTop: 17 }}>{this.state.uplink[this.state.e].power_atten}</Text>
+              <Text h2 style={{ marginTop: 17 }}>{this.state.uplink.length ? this.state.uplink[this.state.e].power_atten : 0}</Text>
               <Text paragraph color="gray">LATEST ATTENUATION</Text>
-              <Text paragraph color="blue">{Nowdate(this.state.uplink[this.state.e].timestamp)}</Text>
+              <Text paragraph color="blue">{Nowdate(this.state.uplink.length ? this.state.uplink[this.state.e].timestamp : 0)}</Text>
             </Card>
           </Block>
 
@@ -330,7 +421,7 @@ class Dashboard extends Component {
               <Icon memory />
               <Text h2 style={{ marginTop: 17 }}>{this.state.modem[this.state.e].memory}</Text>
               <Text paragraph color="gray">AVAILABLE MEMORY</Text>
-              <Text paragraph color="blue">{Nowdate(this.state.downlink[this.state.e].timestamp)}</Text>
+              <Text paragraph color="blue">{Nowdate(this.state.downlink.length ? this.state.downlink[this.state.e].timestamp : 0)}</Text>
             </Card>
           </Block>
               
@@ -339,12 +430,12 @@ class Dashboard extends Component {
             style={[styles.margin, { marginTop: 18 }]}>
             <Block row right>
               <Block flex={2} row center right>
-                <Text paragraph color="blue">{Nowdate(this.state.downlink[this.state.e].timestamp)}</Text>
+                <Text paragraph color="blue">{Nowdate(this.state.downlink.length ? this.state.downlink[this.state.e].timestamp : new Date() / 1000)}</Text>
               </Block>
             </Block>
             <Block>
               <Text>Chart</Text>
-                            <VictoryChart width={300} minDomain={{ y: 100 }} maxDomain={{ y: 170 }} theme={VictoryTheme.material} domainPadding={15}>
+               <VictoryChart width={300} minDomain={{ y: 100 }} maxDomain={{ y: 170 }} theme={VictoryTheme.material} domainPadding={15}>
                 
                 <VictoryLine
 
@@ -353,24 +444,35 @@ class Dashboard extends Component {
                       stroke: "#073060",
                       strokeWidth: 15
                     }}
-                    data={[
-                      {  x: Unix_timestamp(this.state.downlink[this.state.a].timestamp), y: this.state.downlink[this.state.a].sqf, label: this.state.downlink[this.state.a].sqf},
-                      {  x: Unix_timestamp(this.state.downlink[this.state.b].timestamp), y: this.state.downlink[this.state.b].sqf, label: this.state.downlink[this.state.b].sqf},
-                      {  x: Unix_timestamp(this.state.downlink[this.state.c].timestamp), y: this.state.downlink[this.state.c].sqf, label: this.state.downlink[this.state.c].sqf},
-                      {  x: Unix_timestamp(this.state.downlink[this.state.d].timestamp), y: this.state.downlink[this.state.d].sqf, label: this.state.downlink[this.state.d].sqf},
-                      {  x: Unix_timestamp(this.state.downlink[this.state.e].timestamp), y: this.state.downlink[this.state.e].sqf, label: this.state.downlink[this.state.e].sqf}
-                      ]}
+                    data={this.dataDownlink()}
                       > 
                 </VictoryLine>
               </VictoryChart>
             </Block>
+            <View style={styles.filterTime}>
+              <TouchableOpacity
+              onPress={() => this.handleDownlinkChart.today()}
+              style={[styles.filterTimeButton, {backgroundColor: this.state.downlinkChart === 'today' ? theme.colors.blue : '#6c757d'}]}>
+                <Text style={styles.filterTimeText}>Today</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+              onPress={() => this.handleDownlinkChart.yesterday()}
+              style={[styles.filterTimeButton, {backgroundColor: this.state.downlinkChart === 'yesterday' ? theme.colors.blue : '#6c757d'}]}>
+                <Text style={styles.filterTimeText}>Yesterday</Text>
+              </TouchableOpacity>
+              {/* <TouchableOpacity 
+              onPress={() => this.handleDownlinkChart.week()}
+              style={[styles.filterTimeButton, {backgroundColor: this.state.downlinkChart === 'week' ? theme.colors.blue : '#6c757d'}]}>
+                <Text style={styles.filterTimeText}>Week</Text>
+              </TouchableOpacity> */}
+            </View>
           </Card>
           <Card
             title="ATTENUATION CHART"
             style={[styles.margin, { marginTop: 18 }]}>
             <Block row right>
               <Block flex={2} row center right>
-                <Text paragraph color="blue">{Nowdate(this.state.downlink[this.state.e].timestamp)}</Text>
+                <Text paragraph color="blue">{Nowdate(this.state.downlink.length ? this.state.downlink[this.state.e].timestamp : new Date() / 1000)}</Text>
               </Block>
               </Block>
             <Block>
@@ -384,17 +486,28 @@ class Dashboard extends Component {
                       stroke: "#073060",
                       strokeWidth: 15
                     }}
-                    data={[
-                      {  x: Unix_timestamp(this.state.uplink[this.state.a].timestamp), y: this.state.uplink[this.state.a].power_atten, label: this.state.uplink[this.state.a].power_atten},
-                      {  x: Unix_timestamp(this.state.uplink[this.state.b].timestamp), y: this.state.uplink[this.state.b].power_atten, label: this.state.uplink[this.state.b].power_atten},
-                      {  x: Unix_timestamp(this.state.uplink[this.state.c].timestamp), y: this.state.uplink[this.state.c].power_atten, label: this.state.uplink[this.state.c].power_atten},
-                      {  x: Unix_timestamp(this.state.uplink[this.state.d].timestamp), y: this.state.uplink[this.state.d].power_atten, label: this.state.uplink[this.state.d].power_atten},
-                      {  x: Unix_timestamp(this.state.uplink[this.state.e].timestamp), y: this.state.uplink[this.state.e].power_atten, label: this.state.uplink[this.state.e].power_atten}
-                      ]}
+                    data={this.dataUplink()}
                       > 
                 </VictoryLine>
               </VictoryChart>
             </Block>
+            <View style={styles.filterTime}>
+              <TouchableOpacity
+              onPress={() => this.handleUplinkChart.today()}
+              style={[styles.filterTimeButton, {backgroundColor: this.state.uplinkChart === 'today' ? theme.colors.blue : '#6c757d'}]}>
+                <Text style={styles.filterTimeText}>Today</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+              onPress={() => this.handleUplinkChart.yesterday()}
+              style={[styles.filterTimeButton, {backgroundColor: this.state.uplinkChart === 'yesterday' ? theme.colors.blue : '#6c757d'}]}>
+                <Text style={styles.filterTimeText}>Yesterday</Text>
+              </TouchableOpacity>
+              {/* <TouchableOpacity 
+              onPress={() => this.handleUplinkChart.week()}
+              style={[styles.filterTimeButton, {backgroundColor: this.state.uplinkChart === 'week' ? theme.colors.blue : '#6c757d'}]}>
+                <Text style={styles.filterTimeText}>Week</Text>
+              </TouchableOpacity> */}
+            </View>
           </Card>
 
 
