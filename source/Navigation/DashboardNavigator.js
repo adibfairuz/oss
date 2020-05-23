@@ -17,6 +17,7 @@ import MaintenanceFormScreen from '../pages/MaintenanceForm';
 import Logout from '../pages/Logout';
 import AddConfigFormScreen from '../pages/components/configForm/AddConfigForm';
 import EditConfigFormScreen from '../pages/components/configForm/editConfigForm';
+import MapsScreen from '../pages/Maps';
 
 import {
     Dashboard,
@@ -33,6 +34,17 @@ const DashboardNavigator = createStackNavigator({
         navigationOptions: ({ navigation }) => { // di panggil ulang
             return{
             headerTitle:() => <Header navigation = {navigation} headtitle = 'Dashboard OSS'/>, //untuk manggil header navigation header.js tapi masih gagal
+            }
+        }
+    },
+});
+
+const MapsNavigator = createStackNavigator({
+    Maps: { 
+        screen: MapsScreen,
+        navigationOptions: ({ navigation }) => { // di panggil ulang
+            return{
+            headerTitle:() => <Header navigation = {navigation} headtitle = 'Satellite Maps'/>, //untuk manggil header navigation header.js tapi masih gagal
             }
         }
     },
@@ -159,6 +171,13 @@ const DrawerNavigator = createDrawerNavigator(
             navigationOptions: {
                 title: "Dashboard",
                 drawerIcon: ({tintColor}) => <Feather name="home" size={16} color={tintColor} />
+            }
+        },
+        Maps: {
+            screen: MapsNavigator,
+            navigationOptions: {
+                title: "Satellite Maps",
+                drawerIcon: ({tintColor}) => <Feather name="map-pin" size={16} color={tintColor} />
             }
         },
 
